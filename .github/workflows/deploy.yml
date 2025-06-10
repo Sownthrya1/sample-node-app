@@ -1,0 +1,36 @@
+name: Deploy Node.js App
+
+on:
+es  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/YOUR_USERNAME/sample-node-app
+            git pull origin main
+            docker stop sample-node-app || true
+            docker rm sample-node-app || true
+            docker build -t sample-node-app .
+            docker run -d --name sample-node-app -p 3000:3000 sample-node-app

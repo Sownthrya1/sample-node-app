@@ -1,4 +1,4 @@
-name: Deploy to Scaleway Container Registry
+name: Deploy Node.js App
 
 on:
   push:
@@ -13,14 +13,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log in to Scaleway Container Registry
-        env:
-          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
-          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-        run: |
-          echo "${SCW_SECRET_KEY}" | docker login -u "${SCW_ACCESS_KEY}" --password-stdin rg.fr-par.scw.cloud
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-      - name: Build and Push Docker image
-        run: |
-          docker build -t rg.fr-par.scw.cloud/sample-node-ns/sample-node-app:latest .
-          docker push rg.fr-par.scw.cloud/sample-node-ns/sample-node-app:latest
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /root/sample-node-app
+            git pull origin main
+            docker stop sample-node-app || true
+            docker rm sample-node-app || true
+            docker build -t sample-node-app .
+            docker run -d --name sample-node-app -p 3000:3000 sample-node-app

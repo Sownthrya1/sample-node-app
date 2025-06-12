@@ -1,0 +1,26 @@
+name: Deploy to Scaleway Container Registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Scaleway Container Registry
+        env:
+          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        run: |
+          echo "${SCW_SECRET_KEY}" | docker login -u "${SCW_ACCESS_KEY}" --password-stdin rg.fr-par.scw.cloud
+
+      - name: Build and Push Docker image
+        run: |
+          docker build -t rg.fr-par.scw.cloud/sample-node-ns/sample-node-app:latest .
+          docker push rg.fr-par.scw.cloud/sample-node-ns/sample-node-app:latest

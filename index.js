@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
-  res.end("Sownthrya Sample node app");
+  res.end("Sownthrya sample node app");
 });
 
 server.listen(PORT, () => {

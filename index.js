@@ -1,13 +1,9 @@
 const http = require('http');
 
-const PORT = process.env.PORT || 3000;
-
 const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.end("Sownthrya sample node app");
+  res.end('🚀 Deployment Updated Successfully!');
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(3000, () => {
+  console.log('Server running on port 3000');
 });
-

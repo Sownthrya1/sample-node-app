@@ -46,7 +46,14 @@ jobs:
           docker push ${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:$IMAGE_TAG
           echo "IMAGE=${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Deploy container with new image
-        run: |
-          scw container container update ${{ secrets.SCW_CONTAINER_ID }} registry-image=$IMAGE
-          scw container container deploy ${{ secrets.SCW_CONTAINER_ID }}
+      - name: SSH and deploy new container
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker stop sample-node-app || true
+            docker rm sample-node-app || true
+            docker pull $IMAGE
+            docker run -d --name sample-node-app -p 3000:3000 $IMAGE

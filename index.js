@@ -1,7 +1,7 @@
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-  res.end('Sownthrya sample node app');
+  res.end('Updated the deploy.yml file in the sample node app');
 });
 
 server.listen(3000, () => {

@@ -42,8 +42,10 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t ${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:$IMAGE_TAG .
+          docker build -t ${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:$IMAGE_TAG \
+                       -t ${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:latest .
           docker push ${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:$IMAGE_TAG
+          docker push ${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:latest
           echo "IMAGE=${{ secrets.SCW_REGISTRY }}/${{ secrets.SCW_REPOSITORY }}:$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: SSH and deploy new container
@@ -56,4 +58,4 @@ jobs:
             docker stop sample-node-app || true
             docker rm sample-node-app || true
             docker pull $IMAGE
-            docker run -d --name sample-node-app -p 3000:3000 $IMAGE
+            docker run -d -p 3000:3000 --name sample-node-app $IMAGE

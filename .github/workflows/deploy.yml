@@ -10,14 +10,14 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to Scaleway
+    name: Deploy to Scaleway Serverless Container
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure Scaleway credentials
+      - name: Configure Scaleway CLI
         uses: scaleway/action-scw@v0
         id: configure-scw
         with:
@@ -48,15 +48,7 @@ jobs:
           docker push ${{ secrets.SCW_REGISTRY }}/sample-node-ns/sample-node-app:latest
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: SSH and deploy new container
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            IMAGE=${{ env.IMAGE }}
-            docker stop sample-node-app || true
-            docker rm sample-node-app || true
-            docker pull $IMAGE
-            docker run -d -p 3000:3000 --name sample-node-app $IMAGE
+      - name: Update and deploy Scaleway container
+        run: |
+          scw container container update ${{ secrets.SCW_CONTAINER_ID }} registry-image=${{ env.IMAGE }}
+          scw container container deploy ${{ secrets.SCW_CONTAINER_ID }}

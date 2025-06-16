@@ -1,7 +1,7 @@
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-  res.end('Updated and checking whether it is working');
+  res.end('Updated deploy.yml to deploy on container');
 });
 
 server.listen(3000, () => {

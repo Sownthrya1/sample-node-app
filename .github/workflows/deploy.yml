@@ -51,4 +51,4 @@ jobs:
         run: |
           source $GITHUB_ENV
           scw container container update ${{ secrets.SCW_CONTAINER_ID }} registry-image=$IMAGE
-          scw container container deploy ${{ secrets.SCW_CONTAINER_ID }} --redeploy
+          scw container container deploy ${{ secrets.SCW_CONTAINER_ID }} 

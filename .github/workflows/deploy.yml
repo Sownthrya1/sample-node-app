@@ -38,17 +38,16 @@ jobs:
         run: |
           echo "${{ secrets.SCW_SECRET_KEY }}" | docker login ${{ secrets.SCW_REGISTRY }} -u nologin --password-stdin
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image with unique tag
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE=${{ secrets.SCW_REGISTRY }}/sample-node-ns/sample-node-app:$IMAGE_TAG
-          docker build -t $IMAGE -t ${{ secrets.SCW_REGISTRY }}/sample-node-ns/sample-node-app:latest .
+          docker build -t $IMAGE .
           docker push $IMAGE
-          docker push ${{ secrets.SCW_REGISTRY }}/sample-node-ns/sample-node-app:latest
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Update and deploy Scaleway container
+      - name: Deploy to Scaleway Serverless Container
         run: |
           source $GITHUB_ENV
           scw container container update ${{ secrets.SCW_CONTAINER_ID }} registry-image=$IMAGE

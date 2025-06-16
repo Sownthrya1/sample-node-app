@@ -1,9 +1,9 @@
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-  res.end('New deployment Version 3');
+  res.end('Hello from updated Node app!');
 });
 
 server.listen(3000, () => {
-  console.log("App version: v3 is now live");
+  console.log("Running Version 4");
 });

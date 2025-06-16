@@ -43,6 +43,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE=${{ secrets.SCW_REGISTRY }}/sample-node-ns/sample-node-app:$IMAGE_TAG
+          echo "Building image: $IMAGE"
           docker build -t $IMAGE .
           docker push $IMAGE
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV

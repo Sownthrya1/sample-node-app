@@ -1,11 +1,9 @@
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello from updated Node app!');
+  res.end('App deployed on container is working!');
 });
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Running Version 4 on port ${port}`);
+server.listen(3000, () => {
+  console.log("Running Version 4");
 });
